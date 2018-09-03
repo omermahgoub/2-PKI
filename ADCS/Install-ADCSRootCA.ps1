@@ -159,7 +159,7 @@ Critical=Yes
 Empty=True
 [AuthorityInformationAccess]
 Empty=True'
- 
+
         $capolicy | Out-File -FilePath "$($env:windir)\capolicy.inf" -Encoding default -Force
         #region Generate a CAPolicy.inf file for "$($env:windir)\CAPolicy.inf"
 
