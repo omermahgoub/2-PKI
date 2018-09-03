@@ -8,8 +8,8 @@
         The configuration uses certutil.exe to modify the CA settings.
         Tested on Windows Server 2012R2 and Server 2016.
         .EXAMPLE
-        Install-ADCSSubordinateCA.ps1 -Company Demo -DomainURL pki.demo.com -SMTPServer smtp.demo.com -ToAddress 'recipient@demo.com' -FromAddress 'sender@demo.com' -City 'Gothenburg' -State 'VG'
-        This will install the install and configure the Certificate Authority Service with the CA name "Demo-Subordinate-CA".
+        Install-ADCSSubordinateCA.ps1 -Company Contoso -DomainURL pki.Contoso.com -SMTPServer smtp.Contoso.com -ToAddress 'recipient@Contoso.com' -FromAddress 'sender@Contoso.com' -City 'Gothenburg' -State 'VG'
+        This will install the install and configure the Certificate Authority Service with the CA name "Contoso-Subordinate-CA".
         It will create the PKI folder in the default location ("$env:SystemDrive\PKI").
         The PKI folder contains the Database and paths for AIA and CRL files.
         A Web Virtual Directory will be created with the name PKI mapped to "$env:SystemDrive\PKI\Web"
@@ -37,10 +37,12 @@
         Filename:       Install-ADCSRootCA.ps1
         Version:        1.0
         Requirements:   Powershell 4.0 (Module: ServerManager)
-        Changelog:      2016-05-11 09:15 - Creation of script
-                        2016-09-19 16:20 - Removed LDAP paths CRL:"\n10:ldap:///CN=%7%8,CN=%2,CN=CDP,CN=Public Key Services,CN=Services,%6%10" AIA:"\n2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11"
-                        2016-10-07 15:21 - Minor bugfixes and corrections based on PSSharper.
-                        2017-01-10 15:34 - Correction of typos. Clean up help text.
+        Changelog:      2018-09-03 017:03 - Creation of script
+                        2018-09-03 017:03 - Removed LDAP paths CRL:"\n10:ldap:///CN=%7%8,CN=%2,CN=CDP,CN=Public Key Services,CN=Services,%6%10" AIA:"\n2:ldap:///CN=%7,CN=AIA,CN=Public Key Services,CN=Services,%6%11"
+                        2018-09-03 017:03 - Removed SMB Share requirements.
+                        2018-09-03 017:03 - Completly changed the prompt text for the manual steps. Minor bugfixes and corrections based on PSSharper.
+                        2018-09-03 017:03 - Set web.config to hidden. Added Group Policy recommendation for auto enrollment.
+                        2018-09-03 017:03  - Added functions 'Register-CABackup' and 'Add-ScheduledPKIMaintenance'. Change ValidityPeriod to 30 months instead of 2 years.
         .LINK
         https://vmland.wordpress.com
 #>
@@ -51,18 +53,18 @@
 param (
 
     # Company name that will belong in the Certificate Authority Name.
-    # Example: 'DEMO' will be "DEMO-Subordinate-CA"
+    # Example: 'Contoso' will be "Contoso-Subordinate-CA"
     [Parameter(
             Mandatory = $true,
-            HelpMessage = "Company name that will belong in the Certificate Authority Name.`nExample: 'DEMO'`n'DEMO' will be 'DEMO-Subordinate-CA'"
+            HelpMessage = "Company name that will belong in the Certificate Authority Name.`nExample: 'Contoso'`n'Contoso' will be 'Contoso-Subordinate-CA'"
     )]
     [string]$Company,
 
     # Domain URL for CRL and AIA publishing. Also used for the fileshare path.
-    # Example: 'pki.demo.com'
+    # Example: 'pki.Contoso.com'
     [Parameter(
             Mandatory = $true,
-            HelpMessage = "Domain URL for CRL and AIA publishing.`nExample: 'pki.demo.com'"
+            HelpMessage = "Domain URL for CRL and AIA publishing.`nExample: 'pki.Contoso.com'"
     )]
     [string]$DomainURL,
 
@@ -1538,16 +1540,3 @@ $webconfig = @'
         Start-Process -FilePath pkiview.msc
     }
 }
-© 2018 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-Press h to open a hovercard with more details.
